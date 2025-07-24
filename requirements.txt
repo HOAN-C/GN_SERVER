@@ -1,0 +1,30 @@
+# GachonNotifier (GN) - 가천대 공지 알리미 필수 라이브러리
+# 버전이 명시되어 있어 다른 환경에서도 동일하게 설치됩니다
+
+# HTTP 요청 및 API 통신
+requests==2.32.4
+httpx==0.28.1
+
+# 웹 크롤링 및 HTML 파싱
+beautifulsoup4==4.13.4
+lxml==6.0.0
+playwright==1.54.0
+
+# AI 및 자연어 처리
+openai==1.97.1
+
+# 메시징 및 알림
+python-telegram-bot==22.3
+
+# 스케줄링
+schedule==1.2.2
+
+# 환경변수 관리
+python-dotenv==1.1.1
+
+# 웹 서버 및 API
+Flask==3.1.1
+flask-cors==6.0.1
+
+# 유틸리티
+tqdm==4.67.1

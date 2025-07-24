@@ -1,0 +1,71 @@
+{
+  "notices": [
+    {
+      "title": "기존 공지사항",
+      "url": "https://test.com",
+      "date": "2025.01.22",
+      "writer": "관리자"
+    },
+    {
+      "title": "2025학년도 2학기 국내 학점교류 신청 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111101/artclView.do",
+      "date": "2025.07.01",
+      "writer": "교무학사팀"
+    },
+    {
+      "title": "사회봉사 졸업인증 확인 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111460/artclView.do",
+      "date": "2025.07.14",
+      "writer": "ESG센터"
+    },
+    {
+      "title": "2025-2학기 예비수강신청 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111495/artclView.do",
+      "date": "2025.07.16",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2025학년도 1학기 성적공시 및 정정 기간 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/110754/artclView.do",
+      "date": "2025.06.17",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2024학년도 후기 최종 졸업사정 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111241/artclView.do",
+      "date": "2025.07.04",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2025학년도 2학기 전과 합격자 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111500/artclView.do",
+      "date": "2025.07.16",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2025학년도 2학기 재입학 허가자 명단 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111543/artclView.do",
+      "date": "2025.07.18",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2025-2학기 코드쉐어 교과목 수강신청 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/111600/artclView.do",
+      "date": "2025.07.21",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2025학년도 하계방학 단축업무 및 집중휴무일 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/110999/artclView.do",
+      "date": "2025.06.26",
+      "writer": "학사지원팀"
+    },
+    {
+      "title": "2025학년도 하계 계절학기 폐강 교과목 수강정정 및 등록금 환불 안내",
+      "url": "https://www.gachon.ac.kr/bbs/kor/475/110739/artclView.do",
+      "date": "2025.06.16",
+      "writer": "교무학사팀"
+    }
+  ],
+  "last_updated": "2025-07-24T05:52:56.307673"
+}
