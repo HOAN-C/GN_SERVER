@@ -1,6 +1,7 @@
 on:
   push:
     branches: [main]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,10 +25,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/GN_SERVER
-            python3 -m venv venv
-            source venv/bin/activate
+            cd ~/GN_SERVER || exit 1
+            source ~/venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
             pkill -f server.py || true
-            nohup python3 server.py &
+            nohup python3 server.py > server.log 2>&1 &
