@@ -17,7 +17,7 @@ jobs:
           source: "."
           target: "~/GN_SERVER"
 
-      - name: Install dependencies
+      - name: Install dependencies and start server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -25,5 +25,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/GN_SERVER
+            python3 -m venv venv
             source venv/bin/activate
+            pip install --upgrade pip
             pip install -r requirements.txt
+            pkill -f server.py || true
+            nohup python3 server.py &
