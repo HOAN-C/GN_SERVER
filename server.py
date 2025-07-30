@@ -236,7 +236,10 @@ def remove_subscriber():
 
 if __name__ == '__main__':
     # 환경변수에서 설정 가져오기
-    port = int(os.getenv('PORT', 5001))
+    if IS_PRODUCTION:
+        port = int(os.getenv('PORT', 5000))  # 프로덕션: 기본 포트 5000
+    else:
+        port = int(os.getenv('PORT', 5001))  # 개발: 기본 포트 5001
     debug = not IS_PRODUCTION
     
     print("\n🚀 API 서버 시작")
