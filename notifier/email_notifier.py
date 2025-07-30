@@ -42,7 +42,7 @@ def send_email(subject, message, recipient_email):
         <html>
         <body>
         <div style="background-color: #f5f5f5; padding: 20px; border-radius: 10px;">
-            {message.replace('\n', '<br>')}
+            {message}
         </div>
         <hr>
         <p style="color: #666; font-size: 12px;">
@@ -77,9 +77,11 @@ def test_email():
     """
     test_subject = "가천대 공지 알리미 서비스 테스트"
     test_message = """
-🐞 가천대 공지 알리미 시스템 테스트
 
-🚧 가천대 공지 알리미 시스템 점검입니다.
+<h1>🐞 가천대 공지 알리미 시스템 테스트</h1>
+
+<p>🚧 가천대 공지 알리미 시스템 점검입니다.</p>
+
 
 """
     

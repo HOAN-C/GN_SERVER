@@ -66,27 +66,24 @@ def check_and_notify():
                 
                 # 3.2 알림 메시지 구성
                 message = f"""
-🔔 새로운 공지사항
-📌 제목: {notice['title']}
-👤 작성자: {notice['writer']}
-📅 등록일: {notice['date']}
-🔗 링크: {notice['url']}
+<h2 style="margin: 0px;">📌 제목: {notice['title']}</h2>
+<p>👤 작성자: {notice['writer']}</p>
+<p>📅 등록일: {notice['date']}</p>
+<p>🔗 링크: {notice['url']}</p>
 
-📋 AI 요약:
-{ai_summary}
-
-
+<h3 style="margin-bottom: 0px;">📋 AI 요약:</h3>
+<p>{ai_summary}</p>
 """
                 # 3.3 알림 전송
                 main_logger.send("main", "알림 전송")
                 
-                # 텔레그램 알림
-                try:
-                    send_telegram_message(message)
-                except Exception as e:
-                    main_logger.error(f"텔레그램 알림 실패: {e}")
+                # 텔레그램
+                # try:
+                #     send_telegram_message(message)
+                # except Exception as e:
+                #     main_logger.error(f"텔레그램 알림 실패: {e}")
                 
-                # 이메일 알림 (구독자들에게 전송)
+                # 이메일
                 active_subscribers = get_active_subscribers()
                 if active_subscribers:
                     main_logger.info(f"    📧 {len(active_subscribers)}명의 구독자에게 이메일 전송")
@@ -100,13 +97,13 @@ def check_and_notify():
                     
                     main_logger.success(f"이메일 알림 전송 완료: {success_count}/{len(active_subscribers)}명")
                 else:
-                    main_logger.info("    📭 활성 구독자가 없습니다.")
+                    main_logger.info("📭 활성 구독자가 없습니다.")
                 
-                # 디스코드 알림
-                try:
-                    send_discord_announcement(message)
-                except Exception as e:
-                    main_logger.error(f"디스코드 알림 실패: {e}")
+                # 디스코드
+                # try:
+                #     send_discord_announcement(message)
+                # except Exception as e:
+                #     main_logger.error(f"디스코드 알림 실패: {e}")
                 
                 main_logger.success(f"공지사항 처리 완료: {notice['title']}")
                 processed_count += 1

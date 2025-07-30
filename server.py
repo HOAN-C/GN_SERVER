@@ -6,9 +6,40 @@ from flask_cors import CORS
 import json
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# 환경변수 로드
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # 모든 도메인에서 접근 허용
+
+# 환경별 CORS 설정
+ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
+IS_PRODUCTION = ENVIRONMENT == 'production'
+
+if IS_PRODUCTION:
+    # 프로덕션: 특정 도메인만 허용
+    allowed_origins = os.getenv('ALLOWED_ORIGINS', '').split(',')
+    if not allowed_origins or allowed_origins == ['']:
+        # gachonnotifier.site 도메인 설정
+        allowed_origins = ['https://gachonnotifier.site', 'https://www.gachonnotifier.site']
+    
+    CORS(app, 
+         origins=allowed_origins,
+         methods=['GET', 'POST', 'OPTIONS'],
+         allow_headers=['Content-Type', 'Authorization'],
+         supports_credentials=True,
+         max_age=3600)  # 1시간 캐시
+    
+    print(f"🔒 프로덕션 모드: 허용된 도메인 {allowed_origins}")
+else:
+    # 개발: 모든 도메인 허용 (개발용)
+    CORS(app, 
+         origins="*",
+         methods=['GET', 'POST', 'OPTIONS'],
+         allow_headers=['Content-Type', 'Authorization'])
+    
+    print("🔓 개발 모드: 모든 도메인 허용")
 
 # 구독자 파일 경로
 SUBSCRIBERS_FILE = "subscribers/subscribers.json"
@@ -43,18 +74,22 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
-        'service': 'GN API Server'
+        'service': 'GN API Server',
+        'environment': ENVIRONMENT,
+        'cors_mode': 'production' if IS_PRODUCTION else 'development'
     })
 
 @app.route('/api/subscribers', methods=['GET'])
 def get_subscribers():
     """구독자 목록 조회"""
     try:
-        subscribers = load_subscribers()
+        all_subscribers = load_subscribers()
+        active_subscribers = [sub for sub in all_subscribers if sub.get('active', True)]
         return jsonify({
             'success': True,
-            'subscribers': subscribers,
-            'count': len(subscribers)
+            'subscribers': active_subscribers,
+            'count': len(active_subscribers),
+            'total_count': len(all_subscribers)
         })
     except Exception as e:
         return jsonify({
@@ -84,12 +119,38 @@ def add_subscriber():
         
         subscribers = load_subscribers()
         
-        # 중복 확인
-        if any(sub['email'] == email for sub in subscribers):
+        # 활성 구독자 중복 확인
+        if any(sub['email'] == email and sub.get('active', True) for sub in subscribers):
             return jsonify({
                 'success': False,
                 'error': '이미 등록된 이메일 주소입니다.'
             }), 409
+        
+        # 비활성 구독자가 있는지 확인하고 재활성화
+        existing_subscriber = None
+        for sub in subscribers:
+            if sub['email'] == email and not sub.get('active', True):
+                existing_subscriber = sub
+                break
+        
+        if existing_subscriber:
+            # 기존 구독자 재활성화
+            existing_subscriber['active'] = True
+            existing_subscriber['subscribed_at'] = datetime.now().isoformat()
+            if 'unsubscribed_at' in existing_subscriber:
+                del existing_subscriber['unsubscribed_at']
+            
+            if save_subscribers(subscribers):
+                return jsonify({
+                    'success': True,
+                    'message': '구독이 재활성화되었습니다.',
+                    'subscriber': existing_subscriber
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '구독자 저장에 실패했습니다.'
+                }), 500
         
         # 새 구독자 추가
         new_subscriber = {
@@ -137,6 +198,12 @@ def remove_subscriber():
         found = False
         for subscriber in subscribers:
             if subscriber['email'] == email:
+                if subscriber['active'] == False:
+                    return jsonify({
+                        'success': False,
+                        'error': '이미 구독이 해제된 이메일 주소입니다.'
+                    }), 409
+                
                 subscriber['active'] = False
                 subscriber['unsubscribed_at'] = datetime.now().isoformat()
                 found = True
@@ -168,9 +235,16 @@ def remove_subscriber():
 
 
 if __name__ == '__main__':
+    # 환경변수에서 설정 가져오기
+    port = int(os.getenv('PORT', 5001))
+    debug = not IS_PRODUCTION
+    
     print("🚀 API 서버 시작")
     print(f"📅 시작 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("🌐 서버 주소: http://0.0.0.0:5000")
+    print(f"🌐 서버 주소: http://0.0.0.0:{port}")
+    print(f"🔧 디버그 모드: {'켜짐' if debug else '꺼짐'}")
+    print(f"🌍 환경: {ENVIRONMENT}")
+    print(f"🔒 CORS 모드: {'프로덕션' if IS_PRODUCTION else '개발'}")
     
-    # 개발 모드에서 실행
-    app.run(host='0.0.0.0', port=5001, debug=True) 
+    # 환경에 따라 실행
+    app.run(host='0.0.0.0', port=port, debug=debug) 

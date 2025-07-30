@@ -13,8 +13,9 @@ from utils.logger import get_logger
 
 logger = get_logger("crawler")
 
-NOTICE_URL = "https://www.gachon.ac.kr/kor/3104/subview.do" #공지사항 페이지 URL
-TARGET_CLASS = "div.scroll-table > table.board-table.horizon1 > tbody > tr" #공지사항 데이터 위치
+NOTICE_URL = "https://www.gachon.ac.kr/kor/7986/subview.do" #전체공지
+# NOTICE_URL = "https://www.gachon.ac.kr/kor/3104/subview.do" #학사공지
+TARGET_CLASS = "div.scroll-table > table.board-table.horizon > tbody > tr.thumb" #전체공지 데이터 위치
 
 def fetch_notice_list(limit=10):
     with sync_playwright() as p:
@@ -23,8 +24,9 @@ def fetch_notice_list(limit=10):
         logger.start("공지사항 리스트 크롤링 시작")
         try:
             page.goto(NOTICE_URL, wait_until="networkidle") #URL 페이지로 이동
-            page.wait_for_selector("div.scroll-table > table.board-table.horizon1", timeout=15000) #목표 데이터 나올때까지 대기(최대 15초)
+            page.wait_for_selector("div.scroll-table > table.board-table.horizon", timeout=15000) #목표 데이터 나올때까지 대기(최대 15초)
             html_content = page.content() #웹페이지의 모든 내용을 복사해오기
+            
         except Exception as e:
             logger.error(f"크롤링 오류: {e}") #문제가 생기면 에러 메시지 출력하고 빈 리스트 돌려주기
             return []
@@ -43,7 +45,7 @@ def fetch_notice_list(limit=10):
         # 고정 공지사항 제외하고 일반 공지사항만 필터링
         normal_notices = [row for row in rows if not row.get("class") or "notice" not in row.get("class", [])]
 
-        for row in normal_notices[:limit]: #각 행에서 공지사항 정보를 하나씩 뽑아내기
+        for i, row in enumerate(normal_notices[:limit]): #각 행에서 공지사항 정보를 하나씩 뽑아내기
             columns = row.find_all("td") #각 행의 칸들(td)을 찾기
             
             if len(columns) >= 4:  # 칸이 4개 이상 있어야 함 (번호, 제목, 작성자, 날짜)
@@ -54,15 +56,16 @@ def fetch_notice_list(limit=10):
                     # 제목에서 'N' 표시 제거 (새로운 공지사항 표시)
                     title = title.replace('N', '').strip()
                     
-                    onclick_attr = title_link.get("onclick", "") #링크에 숨겨진 정보(onclick) 가져오기
+                    # href 속성에서 JavaScript 함수 호출 추출
+                    href_attr = title_link.get("href", "") #링크의 href 속성 가져오기
                     
-                    # onclick에서 게시판 번호(bbs_id)와 글 번호(artcl_id) 뽑아내기
-                    # 예: jf_viewArtcl('kor', '475', '110580') → bbs_id=475, artcl_id=110580
-                    id_match = re.search(r"jf_viewArtcl\('kor',\s*'(\d+)',\s*'(\d+)'\)", onclick_attr)
+                    # href에서 JavaScript 함수 호출 추출
+                    # 예: javascript:jf_viewArtcl('kor', '111776') → artcl_id=111776
+                    id_match = re.search(r"jf_viewArtcl\('kor',\s*'(\d+)'\)", href_attr)
                     
                     if id_match:
-                        bbs_id, artcl_id = id_match.groups() #번호 두 개를 한 번에 가져오기
-                        url = f"https://www.gachon.ac.kr/bbs/kor/{bbs_id}/{artcl_id}/artclView.do" #실제 공지사항 링크 만들기
+                        artcl_id = id_match.group(1) #글 번호 가져오기
+                        url = f"https://www.gachon.ac.kr/bbs/kor/7986/{artcl_id}/artclView.do" #실제 공지사항 링크 만들기
                         date = columns[3].get_text(strip=True) #날짜 가져오기
                         writer = columns[2].get_text(strip=True) #작성자 가져오기
                         notice_list.append({"title": title, "url": url, "date": date, "writer": writer}) #정보를 리스트에 추가하기
