@@ -85,8 +85,6 @@ def send_welcome_email(email):
         subject = "🎉 무당이 친구가 되어줘서 고마워요!"
         
         message = f"""
-<h2 style="color: #2c3e50; margin-bottom: 20px;">🎉 무당이 친구가 되어줘서 고마워요!</h2>
-
 <p style="font-size: 16px; line-height: 1.6; color: #34495e;">
 안녕하세요! <strong>{email}</strong>님<br>
 무당이와 친구가 되어주셔서 감사해요! 😊
