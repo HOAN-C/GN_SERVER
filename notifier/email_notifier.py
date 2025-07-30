@@ -71,6 +71,42 @@ def send_email(subject, message, recipient_email):
         logger.error(f"이메일 전송 오류 ({to_email}): {e}")
         return False
 
+def send_welcome_email(email):
+    """
+    구독 완료 환영 이메일 전송
+    
+    Args:
+        email (str): 구독자 이메일 주소
+    
+    Returns:
+        bool: 전송 성공 여부
+    """
+    try:
+        subject = "🎉 무당이 친구가 되어줘서 고마워요!"
+        
+        message = f"""
+<h2 style="color: #2c3e50; margin-bottom: 20px;">🎉 무당이 친구가 되어줘서 고마워요!</h2>
+
+<p style="font-size: 16px; line-height: 1.6; color: #34495e;">
+안녕하세요! <strong>{email}</strong>님<br>
+무당이와 친구가 되어주셔서 감사해요! 😊
+</p>
+
+<p style="font-size: 15px; line-height: 1.6; color: #34495e;">
+이제 새로운 공지사항이 올라오면 AI가 요약해서 바로 알려드릴게요!
+</p>
+
+<p style="font-size: 14px; color: #7f8c8d; margin-top: 20px;">
+💌 구독 해제가 필요하시면 <a href="https://gachonnotifier.site/" style="color: #3498db;">여기</a>를 클릭해주세요.
+</p>
+"""
+        
+        return send_email(subject, message, email)
+        
+    except Exception as e:
+        logger.error(f"환영 이메일 전송 실패 ({email}): {e}")
+        return False
+
 def test_email():
     """
     이메일 연결 테스트
