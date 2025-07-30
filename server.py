@@ -239,7 +239,7 @@ if __name__ == '__main__':
     port = int(os.getenv('PORT', 5001))
     debug = not IS_PRODUCTION
     
-    print("🚀 API 서버 시작")
+    print("\n🚀 API 서버 시작")
     print(f"📅 시작 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🌐 서버 주소: http://0.0.0.0:{port}")
     print(f"🔧 디버그 모드: {'켜짐' if debug else '꺼짐'}")

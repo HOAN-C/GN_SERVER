@@ -67,11 +67,11 @@ class GNLogger:
     
     def process(self, current: int, total: int, message: str):
         """진행 상황 로그"""
-        self.logger.info(f"    📝 [{current}/{total}] {message}")
+        self.logger.info(f"📝 [{current}/{total}] {message}")
     
     def send(self, service: str, message: str):
         """알림 전송 로그"""
-        self.logger.info(f"    🚨 [{service}] {message}")
+        self.logger.info(f"🚨 [{service}] {message}")
     
     def result(self, message: str):
         """결과 로그"""

@@ -86,7 +86,7 @@ def check_and_notify():
                 # 이메일
                 active_subscribers = get_active_subscribers()
                 if active_subscribers:
-                    main_logger.info(f"    📧 {len(active_subscribers)}명의 구독자에게 이메일 전송")
+                    main_logger.info(f"📧 {len(active_subscribers)}명의 구독자에게 이메일 전송")
                     success_count = 0
                     for subscriber in active_subscribers:
                         try:

@@ -2,14 +2,15 @@
   "subscribers": [
     {
       "email": "hoan.c9907@gmail.com",
-      "subscribed_at": "2025-07-30T20:46:34.185351",
+      "subscribed_at": "2025-07-30T22:44:25.074940",
       "active": true
     },
     {
       "email": "hoan_c9907@naver.com",
       "subscribed_at": "2025-07-30T16:21:38.145424",
-      "active": true
+      "active": false,
+      "unsubscribed_at": "2025-07-30T22:57:00.028305"
     }
   ],
-  "last_updated": "2025-07-30T20:46:34.185365"
+  "last_updated": "2025-07-30T22:57:00.028317"
 }

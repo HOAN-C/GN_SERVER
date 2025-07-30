@@ -43,6 +43,8 @@ def fetch_notice_content(url):
     try:
         soup = BeautifulSoup(html_content, "html.parser")
         
+
+        
         # 공지사항 정보 추출
         notice_info = {}
         
@@ -102,7 +104,7 @@ def fetch_notice_content(url):
 
 # 테스트용 코드
 if __name__ == "__main__":
-    test_url = "https://www.gachon.ac.kr/kor/3104/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa29yJTJGNDc1JTJGMTExNjAwJTJGYXJ0Y2xWaWV3LmRvJTNGcGFnZSUzRDElMjZzcmNoQ29sdW1uJTNEJTI2c3JjaFdyZCUzRCUyNmJic0NsU2VxJTNEJTI2YmJzT3BlbldyZFNlcSUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2cmdzRW5kZGVTdHIlM0QlMjZpc1ZpZXdNaW5lJTNEZmFsc2UlMjZwYXNzd29yZCUzRCUyNg%3D%3D"
+    test_url = "https://www.gachon.ac.kr/kor/7986/subview.do?artclId=111776"
     
     notice_data = fetch_notice_content(test_url)
     
@@ -113,6 +115,7 @@ if __name__ == "__main__":
         print(f"등록일: {notice_data.get('date', '날짜 없음')}")
         print(f"조회수: {notice_data.get('views', '조회수 없음')}")
         print(f"내용 길이: {len(notice_data.get('content', ''))}자")
+        print(f"내용: {notice_data.get('content', '내용 없음')}")
         print(f"첨부파일: {len(notice_data.get('attachments', []))}개")
     else:
         print("❌ 크롤링 실패")
