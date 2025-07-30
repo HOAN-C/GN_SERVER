@@ -11,7 +11,11 @@ from utils.logger import get_logger
 
 logger = get_logger("history")
 
-def load_history(history_file="./history/history.json"):
+def load_history(history_file=None):
+    if history_file is None:
+        # 현재 파일의 디렉토리를 기준으로 절대 경로 생성
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        history_file = os.path.join(current_dir, "history.json")
     """
     기록 파일에서 이전 공지사항 목록을 로드.
     
@@ -28,7 +32,11 @@ def load_history(history_file="./history/history.json"):
         logger.error(f"기록 로드 오류: {e}")
         return []
 
-def save_history(notices, history_file="./history/history.json"):
+def save_history(notices, history_file=None):
+    if history_file is None:
+        # 현재 파일의 디렉토리를 기준으로 절대 경로 생성
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        history_file = os.path.join(current_dir, "history.json")
     """
     현재 공지사항 목록을 기록 파일에 저장.
     
@@ -47,7 +55,11 @@ def save_history(notices, history_file="./history/history.json"):
     except Exception as e:
         logger.error(f"기록 저장 오류: {e}")
 
-def update_history(new_notices, history_file="./history/history.json"):
+def update_history(new_notices, history_file=None):
+    if history_file is None:
+        # 현재 파일의 디렉토리를 기준으로 절대 경로 생성
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        history_file = os.path.join(current_dir, "history.json")
     """
     새로운 공지사항을 기록에 추가.
     
@@ -62,7 +74,11 @@ def update_history(new_notices, history_file="./history/history.json"):
     
     save_history(updated_notices, history_file)
 
-def get_new_notices(crawled_notices, history_file="./history/history.json"):
+def get_new_notices(crawled_notices, history_file=None):
+    if history_file is None:
+        # 현재 파일의 디렉토리를 기준으로 절대 경로 생성
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        history_file = os.path.join(current_dir, "history.json")
     """
     현재 공지사항과 기록을 비교하여 새로운 공지사항만 반환.
     
