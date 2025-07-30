@@ -5,11 +5,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Upload to EC2
+      - name: Upload code to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -18,16 +19,15 @@ jobs:
           source: "."
           target: "~/GN_SERVER"
 
-      - name: Install dependencies and start server
+      - name: Install dependencies & restart Flask server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/GN_SERVER || exit 1
-            source ~/venv/bin/activate
+            cd ~/GN_SERVER
+            source venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
-            pkill -f server.py || true
-            nohup python3 server.py > server.log 2>&1 &
+            sudo systemctl restart gn-server
