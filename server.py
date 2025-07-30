@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 from notifier.email_notifier import send_email, send_welcome_email
+import threading
 
 # 환경변수 로드
 load_dotenv()
@@ -44,6 +45,20 @@ else:
 
 # 구독자 파일 경로
 SUBSCRIBERS_FILE = "subscribers/subscribers.json"
+
+def send_welcome_email_async(email):
+    """백그라운드에서 환영 이메일 전송"""
+    def send_email_task():
+        try:
+            send_welcome_email(email)
+            print(f"✅ 환영 이메일 전송 완료: {email}")
+        except Exception as e:
+            print(f"❌ 환영 이메일 전송 실패 ({email}): {e}")
+    
+    # 백그라운드 스레드에서 이메일 전송
+    thread = threading.Thread(target=send_email_task)
+    thread.daemon = True  # 메인 프로그램 종료 시 함께 종료
+    thread.start()
 
 def load_subscribers():
     try:
@@ -142,8 +157,8 @@ def add_subscriber():
                 del existing_subscriber['unsubscribed_at']
             
             if save_subscribers(subscribers):
-                # 재활성화 환영 이메일 전송
-                send_welcome_email(email)
+                # 백그라운드에서 환영 이메일 전송
+                send_welcome_email_async(email)
                 return jsonify({
                     'success': True,
                     'message': '구독이 재활성화되었습니다.',
@@ -165,8 +180,8 @@ def add_subscriber():
         subscribers.append(new_subscriber)
         
         if save_subscribers(subscribers):
-            # 새 구독자 환영 이메일 전송
-            send_welcome_email(email)
+            # 백그라운드에서 환영 이메일 전송
+            send_welcome_email_async(email)
             return jsonify({
                 'success': True,
                 'message': '구독이 완료되었습니다.',
