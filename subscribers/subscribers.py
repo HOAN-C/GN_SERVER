@@ -10,7 +10,8 @@ from utils.logger import get_logger
 logger = get_logger("subscriber")
 
 # 구독자 파일 경로
-SUBSCRIBERS_FILE = "subscribers/subscribers.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SUBSCRIBERS_FILE = os.path.join(BASE_DIR, 'subscribers.json')
 
 def load_subscribers():
     """구독자 목록을 로드합니다."""

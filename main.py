@@ -36,6 +36,9 @@ def check_and_notify():
         
         if not new_notices:
             return {"status": "success", "message": "새로운 공지사항 없음", "count": 0}
+
+        
+        
         
         # 3. 각 새로운 공지사항에 대해 처리
         main_logger.step(3, 3, "공지사항 요약 및 알림 전송")
