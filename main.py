@@ -68,13 +68,11 @@ def check_and_notify():
                 
                 # 3.2 알림 메시지 구성
                 summarized_notice = f"""
-<h3 style="margin: 0px;">📌 제목: {notice['title']}</h3>
-<p>👤 작성자: {notice['writer']}</p>
-<p>📅 등록일: {notice['date']}</p>
-<p>🔗 링크: <a href="{notice['url']}" style="color: #3498db; text-decoration: none;">바로가기</a></p>
-
+<h3 style="margin: 0px;">📌 {notice['title']}</h3>
 <h3 style="margin-bottom: 0px;">📋 AI 요약:</h3>
-<p style="margin-bottom: 20px;">{ai_summary}</p>
+<p style="margin-bottom: 10px;">{ai_summary}</p>
+
+<p>🔗 링크: <a href="{notice['url']}" style="color: #3498db; text-decoration: none;">바로가기</a></p>
 """
                 # 구조체 형태로 저장
                 notification_stack.append({
@@ -110,22 +108,19 @@ def check_and_notify():
             title = notification_stack[0]['title']
             message = notification_stack[0]['message']
         else:
-            title = f"{len(notification_stack)}개의 새로운 공지사항"
-            # 여러 공지사항을 하나의 메시지로 합치기
+            title = f"📢 {len(notification_stack)}개의 새로운 공지사항이 있어요!"
+            
             message = f"""
-<h2 style="color: #2c3e50; margin-bottom: 20px;">📢 새로운 공지사항이 있어요!</h2>
-
 {''.join([f'''
-<details style="margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; padding: 10px;">
-    <summary style="cursor: pointer; font-weight: bold; color: #2c3e50; padding: 5px;">
-        {item['title']} <span style="color: #3498db; font-size: 14px;">[요약 보기]</span>
-    </summary>
-    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+<div style="margin-bottom: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #f8f9fa;">
+    <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; border-bottom: 2px solid #3498db; padding-bottom: 8px;">
+        {item['title']}
+    </h3>
+    <div style="color: #34495e; line-height: 1.6;">
         {item['message']}
     </div>
-</details>
+</div>
 ''' for item in notification_stack])}
-
 """
 
         for subscriber in active_subscribers:

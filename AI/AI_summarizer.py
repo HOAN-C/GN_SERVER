@@ -39,8 +39,7 @@ def summarize_notice(title, content, max_length=250):
 - 핵심 내용만 추출
 - {max_length}자 이내로 요약
 - 학생들이 알아야 할 중요한 정보 위주로
-- 마감일, 신청기간, 문의처, 전화번호 등 중요 정보 포함
-- 간결하고 읽기 쉽게 작성
+- 카테고리, 분야, 마감일, 신청기간 등 중요 정보 포함
 """
 
         # OpenAI API 호출
