@@ -36,15 +36,14 @@ def check_and_notify():
         
         if not new_notices:
             return {"status": "success", "message": "새로운 공지사항 없음", "count": 0}
+        
+        # 3. 각 새로운 공지사항에 대해 요약 생성
+        main_logger.step(3, 3, "공지사항 요약")
 
-        
-        
-        
-        # 3. 각 새로운 공지사항에 대해 처리
-        main_logger.step(3, 3, "공지사항 요약 및 알림 전송")
         processed_count = 0
+        notification_stack = [] #여러 알림이 있을 시 한번에 알림을 정리해서 전송하기 위한 저장소
         for i, notice in enumerate(new_notices, 1):
-            main_logger.process(i, len(new_notices), f"공지사항 처리 중: {notice['title']}")
+            main_logger.process(i, len(new_notices), f"공지사항 요약 시작: {notice['title']}")
             
             try:
                 # 3.1 공지사항 내용 크롤링 및 AI 요약
@@ -57,63 +56,86 @@ def check_and_notify():
 작성자: {notice_info.get('writer', '작성자 없음')}
 등록일: {notice_info.get('date', '날짜 없음')}
 조회수: {notice_info.get('views', '조회수 없음')}
-
 내용:
 {notice_info.get('content', '내용 없음')}
 
 첨부파일: {len(notice_info.get('attachments', []))}개
 """
+                    # AI 요약
                     ai_summary = summarize_notice(notice['title'], notice_content.strip())
                 else:
                     ai_summary = "공지사항 내용을 가져올 수 없습니다."
                 
                 # 3.2 알림 메시지 구성
-                message = f"""
-<h2 style="margin: 0px;">📌 제목: {notice['title']}</h2>
+                summarized_notice = f"""
+<h3 style="margin: 0px;">📌 제목: {notice['title']}</h3>
 <p>👤 작성자: {notice['writer']}</p>
 <p>📅 등록일: {notice['date']}</p>
-<p>🔗 링크: {notice['url']}</p>
+<p>🔗 링크: <a href="{notice['url']}" style="color: #3498db; text-decoration: none;">바로가기</a></p>
 
 <h3 style="margin-bottom: 0px;">📋 AI 요약:</h3>
-<p>{ai_summary}</p>
+<p style="margin-bottom: 20px;">{ai_summary}</p>
 """
-                # 3.3 알림 전송
-                main_logger.send("main", "알림 전송")
-                
-                # 텔레그램
-                # try:
-                #     send_telegram_message(message)
-                # except Exception as e:
-                #     main_logger.error(f"텔레그램 알림 실패: {e}")
-                
-                # 이메일
-                active_subscribers = get_active_subscribers()
-                if active_subscribers:
-                    main_logger.info(f"📧 {len(active_subscribers)}명의 구독자에게 이메일 전송")
-                    success_count = 0
-                    for subscriber in active_subscribers:
-                        try:
-                            send_email(notice['title'], message, subscriber['email'])
-                            success_count += 1
-                        except Exception as e:
-                            main_logger.error(f"이메일 전송 실패 ({subscriber['email']}): {e}")
-                    
-                    main_logger.success(f"이메일 알림 전송 완료: {success_count}/{len(active_subscribers)}명")
-                else:
-                    main_logger.info("📭 활성 구독자가 없습니다.")
-                
-                # 디스코드
-                # try:
-                #     send_discord_announcement(message)
-                # except Exception as e:
-                #     main_logger.error(f"디스코드 알림 실패: {e}")
-                
-                main_logger.success(f"공지사항 처리 완료: {notice['title']}")
+                # 구조체 형태로 저장
+                notification_stack.append({
+                    'title': notice['title'],
+                    'message': summarized_notice
+                })
+                main_logger.success(f"공지사항 요약 완료: {notice['title']}")
                 processed_count += 1
                 
             except Exception as e:
                 main_logger.error(f"공지사항 처리 실패: {e}")
                 continue
+        
+
+
+        # 3.3 알림 전송
+        main_logger.send("main", "알림 전송")
+        
+        # 이메일 활성 유저
+        active_subscribers = get_active_subscribers()
+
+        if (len(active_subscribers)==0):
+            main_logger.info("📭 활성 구독자가 없습니다.")
+            return {"status": "success", "message": "활성 구독자가 없습니다.", "count": 0}
+
+        main_logger.info(f"📧 {len(active_subscribers)}명의 구독자에게 이메일 전송")
+        success_count = 0
+
+        # 이메일 내용 구분
+        title = ''
+        message = ''
+        if (len(notification_stack)==1):
+            title = notification_stack[0]['title']
+            message = notification_stack[0]['message']
+        else:
+            title = f"{len(notification_stack)}개의 새로운 공지사항"
+            # 여러 공지사항을 하나의 메시지로 합치기
+            message = f"""
+<h2 style="color: #2c3e50; margin-bottom: 20px;">📢 새로운 공지사항이 있어요!</h2>
+
+{''.join([f'''
+<details style="margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; padding: 10px;">
+    <summary style="cursor: pointer; font-weight: bold; color: #2c3e50; padding: 5px;">
+        {item['title']} <span style="color: #3498db; font-size: 14px;">[요약 보기]</span>
+    </summary>
+    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+        {item['message']}
+    </div>
+</details>
+''' for item in notification_stack])}
+
+"""
+
+        for subscriber in active_subscribers:
+            try:
+                send_email(title, message, subscriber['email'])
+                success_count += 1
+            except Exception as e:
+                main_logger.error(f"이메일 전송 실패 ({subscriber['email']}): {e}")
+        
+        main_logger.success(f"이메일 알림 전송 완료: {success_count}/{len(active_subscribers)}명")
         
         main_logger.result(f"새로운 공지사항 요약 및 알림 전송 완료 ({processed_count}개)")
         return {
