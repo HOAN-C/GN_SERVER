@@ -95,7 +95,7 @@ def health_check():
         'cors_mode': 'production' if IS_PRODUCTION else 'development'
     })
 
-@app.route('/api/subscribers', methods=['GET'])
+@app.route('/api/subscriber/count', methods=['GET'])
 def get_subscribers():
     """구독자 목록 조회"""
     try:
@@ -103,7 +103,6 @@ def get_subscribers():
         active_subscribers = [sub for sub in all_subscribers if sub.get('active', True)]
         return jsonify({
             'success': True,
-            'subscribers': active_subscribers,
             'count': len(active_subscribers),
             'total_count': len(all_subscribers)
         })

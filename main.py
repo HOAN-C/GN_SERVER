@@ -68,8 +68,6 @@ def check_and_notify():
                 
                 # 3.2 알림 메시지 구성
                 summarized_notice = f"""
-<h3 style="margin: 0px;">📌 {notice['title']}</h3>
-<h3 style="margin-bottom: 0px;">📋 AI 요약:</h3>
 <p style="margin-bottom: 10px;">{ai_summary}</p>
 
 <p>🔗 링크: <a href="{notice['url']}" style="color: #3498db; text-decoration: none;">바로가기</a></p>
@@ -109,12 +107,11 @@ def check_and_notify():
             message = notification_stack[0]['message']
         else:
             title = f"📢 {len(notification_stack)}개의 새로운 공지사항이 있어요!"
-            
             message = f"""
 {''.join([f'''
 <div style="margin-bottom: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #f8f9fa;">
     <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; border-bottom: 2px solid #3498db; padding-bottom: 8px;">
-        {item['title']}
+        📌{item['title']}
     </h3>
     <div style="color: #34495e; line-height: 1.6;">
         {item['message']}
